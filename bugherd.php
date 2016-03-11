@@ -5,7 +5,7 @@ Plugin URI: http://simpleux.co.uk/plugins/wordpress/bugherd
 Description: Bug tracking plugin. Allow you to integrate BugHerd sidebar into WordPress based website within one minute.
 Author: Junaid Ahmed
 Author URI: http://www.simpleux.co.uk
-Version: 1.0.0.0
+Version: 1.0.1
 License: GPLv3 or later
 ***/
 

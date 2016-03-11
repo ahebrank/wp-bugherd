@@ -1,13 +1,15 @@
 === Plugin Name ===
-Contributors: simpleux, vbrendel
+Contributors: simpleux, vbrendel, caalami
 Tags: admin, administration, tracking, multisite, integration, api, bug, bugtracking, bugherd, bug-tracking, todo, projects, project-management
 Requires at least: 2.8
-Tested up to: 3.4.1
-Stable tag: 1.0.0.0
+Tested up to: 4.4.2
+Stable tag: 1.0.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 A Multisite, bug tracking plugin. Allow you to integrate BugHerd sidebar into WordPress based website/blog within one minute.
+
+Forked from the origin by SimpleUX: http://simpleux.co.uk/plugins/wordpress/bugherd/
 
 == Description ==
 

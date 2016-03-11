@@ -36,7 +36,7 @@ class Bugherd_View
 	 * Administration tasks
 	 *
 	 * @access public
-	 * @since 1.0.0.0
+	 * @since 1.0.1
 	 * @return void
 	 */
 	public static function admin_init()
@@ -48,6 +48,9 @@ class Bugherd_View
 		//Setup assets
 		add_action('admin_print_styles-settings_page_wp-bugherd', array('Bugherd_View','css'));
 		add_action('admin_footer-settings_page_wp-bugherd', array('Bugherd_View','js'));
+
+		// add a settings link
+		add_filter('plugin_action_links', array('Bugherd_View', 'add_action_links'), 10, 5);
 
 		//Ajax
 		add_action( 'wp_ajax_bugherd_ajax', array('Bugherd_View','ajax'));
@@ -111,12 +114,31 @@ class Bugherd_View
 	 * Add menu into options page
 	 *
 	 * @access public
-	 * @since 1.0.0.0
+	 * @since 1.0.1
 	 * @return void
 	 */	
 	public static function admin_menu()
 	{
 		add_options_page(__('BugHerd','wp-bugherd'),__('BugHerd','wp-bugherd'),'manage_options','wp-bugherd', array('Bugherd_View','admin'));
+	}
+
+	/** 
+	 * add a settings link on the list page
+	 * 
+	 * @param array $links
+	 * @access public
+	 * @since 1.0.1
+	 * @return array
+	 */
+	public static function add_action_links ( $links, $plugin_file ) 
+	{
+		if ($plugin_file == 'bugherd/bugherd.php') {
+	 		$mylinks = array(
+	 			'<a href="' . admin_url( 'options-general.php?page=wp-bugherd' ) . '">Settings</a>',
+	 		);
+	 		$links = array_merge( $mylinks, $links );
+	 	}
+		return $links;
 	}
 	
 	/**
@@ -230,7 +252,8 @@ class Bugherd_View
 																$bugherd_options_default = array(
 																									'user_levels' => array('administrator','editor'),
 																									'enable_admin' => 'no',
-																									'sites' => array()
+																									'sites' => array(),
+																									'blacklist' => ''
 																								);
 																$bugherd_options = wp_parse_args($bugherd_options, $bugherd_options_default);
 																
@@ -262,6 +285,12 @@ class Bugherd_View
 																			
 																			<label><input type="radio" name="options[enable_admin]" id="options_enable_admin_yes" value="yes" <?php checked($bugherd_options['enable_admin'], 'yes') ?> /> <?php _e('Yes','wp-bugherd'); ?></label> 
 																			<label><input type="radio" name="options[enable_admin]" id="options_enable_admin_no" value="no" <?php checked($bugherd_options['enable_admin'], 'no') ?> /> <?php _e('No','wp-bugherd'); ?></label>
+																		</p>
+
+																		<p>
+																			<label class="main_label"><?php _e('Hide Bugherd for these hostnames (comma-separated):','wp-bugherd'); ?>
+																				<input type="text" name="options[blacklist]" placeholder="example.com" value="<?php print $bugherd_options['blacklist']; ?>">
+																			</label>
 																		</p>
 																		
 																		<?php if (version_compare( $wp_version, '3.0', '>=' ) ) : ?>
@@ -979,7 +1008,7 @@ class Bugherd_View
 	 * Add BugHerd integration code
 	 *
 	 * @access public
-	 * @since 1.0.0.0
+	 * @since 1.0.1
 	 */	
 	public static function integration()
 	{
@@ -1012,6 +1041,15 @@ class Bugherd_View
 		if(empty($integration_code['bugherd_integration_code']))
 		{
 			$allow_integration = false;
+		}
+
+		// Check hostname
+		if(isset($integration_code['blacklist']) && !empty($integration_code['blacklist'])) 
+		{
+			$blacklist = array_map('trim', explode(',', $integration_code['blacklist']));
+			if (in_array($_SERVER['HTTP_HOST'], $blacklist)) {
+				$allow_integration = false;
+			}
 		}
 		
 		//Did user selected to enable it for wp admin?

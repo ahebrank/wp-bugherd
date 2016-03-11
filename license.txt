@@ -1,6 +1,7 @@
 BugHerd - simple bug tracking sidebar integration in WordPress
 
 Copyright 2012 by the SimpleUX LTD
+Forked and modified 2016 by Andy Hebrank
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
